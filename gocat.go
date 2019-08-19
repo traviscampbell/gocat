@@ -162,11 +162,7 @@ func (gc *GoCat) scoreSomeNip(farg string) error {
 // the bomb-ass Nip you just scored and that Time of the
 // Nip is fast approaching so they better come the fuck on..
 func (gc *GoCat) gatherHomies(f, l, s string) {
-	fmatter := formatters.TTY16m
-	if fmatter == nil {
-		fmatter = formatters.TTY256
-	}
-
+    fmatter := formatters.Get("terminal256")
 	gc.fmatter = fmatter
 
 	// -----
