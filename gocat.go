@@ -162,8 +162,16 @@ func (gc *GoCat) scoreSomeNip(farg string) error {
 // the bomb-ass Nip you just scored and that Time of the
 // Nip is fast approaching so they better come the fuck on..
 func (gc *GoCat) gatherHomies(f, l, s string) {
-    fmatter := formatters.Get("terminal256")
-	gc.fmatter = fmatter
+
+	// attempt to see if teminal supports truecolour
+	// Reference: https://gist.github.com/XVilka/8346728 
+    if ct := os.Getenv("COLORTERM"); ct == "truecolour" || ct == "24bit" {
+		gc.fmatter = formatters.Get("terminal16m")
+		formatters.Fallback = formatters.Get("terminal256")
+	} else {
+		gc.fmatter = formatters.Get("terminal256")
+		formatters.Fallback = formatters.Get("terminal")
+	}
 
 	// -----
 
