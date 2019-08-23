@@ -102,6 +102,7 @@ func main() {
 		os.Exit(0)
 	}
 
+	// no args given and nothing on stdin
 	if flag.NArg() < 1 && !isPiped() {
 		printBanner()
 		fmt.Printf("  Usage: gocat [Options] [File|-]...\n\n")
@@ -109,14 +110,16 @@ func main() {
 		os.Exit(0)
 	}
 
-	for _, farg := range flag.Args() {
+	// typical day in the life of a gocat. get
+	// dope, get friends, get high; rinse & repeat
+	dayInTheLife := func(in string) {
 		gocat := GoCat{}
 
-		if err := gocat.scoreSomeNip(farg); err != nil {
+		if err := gocat.scoreSomeNip(in); err != nil {
 			log.Fatalln(err.Error())
 		}
 
-		gocat.gatherHomies(farg, *l, *s)
+		gocat.gatherHomies(in, *l, *s)
 
 		if err := gocat.getNippedAF(); err != nil {
 			log.Println(err.Error())
@@ -125,8 +128,14 @@ func main() {
 		if *debug {
 			log.Printf("Lexer: %s Style: %s\n", gocat.lexy.Config().Name, gocat.steez.Name)
 		}
+	}
 
-		fmt.Printf("\n\n")
+	if flag.NArg() < 1 {
+		dayInTheLife("-")
+	} else {
+		for _, farg := range flag.Args() {
+			dayInTheLife(farg)
+		}
 	}
 }
 
@@ -147,7 +156,7 @@ func (gc *GoCat) scoreSomeNip(farg string) error {
 	var err error
 
 	switch {
-	case (farg == "" || farg == "-"):
+	case farg == "-":
 		gc.nip, err = ioutil.ReadAll(os.Stdin)
 
 	default:
@@ -243,8 +252,6 @@ func tweakStyleForTerm(s *chroma.Style) *chroma.Style {
 // (V) (°,,,,°) (V) - why not, stdin..?
 func isPiped() bool {
 	stat, err := os.Stdin.Stat()
-	if err != nil {
-		return false
-	}
-	return (stat.Mode()&os.ModeNamedPipe != 0)
+	return err == nil && (stat.Mode()&os.ModeCharDevice) != os.ModeCharDevice
 }
+
