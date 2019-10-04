@@ -174,7 +174,7 @@ func (gc *GoCat) gatherHomies(f, l, s string) {
 
 	// attempt to see if teminal supports truecolour
 	// Reference: https://gist.github.com/XVilka/8346728 
-    if ct := os.Getenv("COLORTERM"); ct == "truecolour" || ct == "24bit" {
+    if ct := os.Getenv("COLORTERM"); ct == "truecolor" || ct == "truecolour" || ct == "24bit" {
 		gc.fmatter = formatters.Get("terminal16m")
 		formatters.Fallback = formatters.Get("terminal256")
 	} else {
